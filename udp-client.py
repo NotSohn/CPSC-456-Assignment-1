@@ -4,13 +4,13 @@ target_host = "127.0.0.1"
 target_port = 80
 
 # create a socket object
-client = socket.REPLACE_ME(socket.REPLACE_ME, socket.REPLACE_ME)
+client = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
 # send some data
-client.sendto(b"AAABBBCCC", (REPLACE_ME, REPLACE_ME))
+client.sendto(b"AAABBBCCC", (target_host, target_port))
 
 # receive some data
-data, addr = client.REPLACE_ME(4096)
+data, addr = client.recvfrom(4096)
 
 client.close()
 

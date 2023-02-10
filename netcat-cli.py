@@ -44,7 +44,7 @@ def client_handler(client_socket):
 
         # keep reading data until none is available
         while True:
-            data = client_socket.REPLACE_ME(1024)
+            data = client_socket.recv(1024)
 
             if not data:
                 break
@@ -67,7 +67,7 @@ def client_handler(client_socket):
     # check for command execution
     if len(execute):
         # run the command
-        output = REPLACE_ME(execute)
+        output = run_command(execute)
 
         client_socket.send(output)
 
@@ -81,7 +81,7 @@ def client_handler(client_socket):
             # now we receive until we see a linefeed (enter key)
             cmd_buffer = b''
             while b"\n" not in cmd_buffer:
-                cmd_buffer += client_socket.REPLACE_ME(1024)
+                cmd_buffer += client_socket.recv(1024)
 
             # we have a valid command so execute it and send back the results
             response = run_command(cmd_buffer.decode())
@@ -99,8 +99,8 @@ def server_loop():
     if not len(target):
         target = "0.0.0.0"
 
-    server = socket.REPLACE_ME(socket.REPLACE_ME, socket.REPLACE_ME)
-    server.REPLACE_ME((target, port))
+    server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server.bind((target, port))
     server.listen(5)
 
     while True:
@@ -118,20 +118,20 @@ def client_sender(buffer):
 
     try:
         # connect to our target host
-        client.REPLACE_ME((REPLACE_ME, REPLACE_ME))
+        client.connect((target, port))
 
         # if we detect input from stdin send it
         # if not we are going to wait for the user to punch some in
-        if len(REPLACE_ME):
-            client.send(REPLACE_ME.encode('utf-8'))
+        if len(buffer):
+            client.send(buffer.encode('utf-8'))
 
         while True:
             # now wait for data back
             recv_len = 1
             response = b''
 
-            while REPLACE_ME:
-                data = client.REPLACE_ME(4096)
+            while recv_len:
+                data = client.recv(4096)
                 recv_len = len(data)
                 response += data
 
@@ -145,7 +145,7 @@ def client_sender(buffer):
             buffer += "\n"
 
             # send it off
-            client.REPLACE_ME(REPLACE_ME.encode('utf-8'))
+            client.send(buffer.encode('utf-8'))
 
     except socket.error as exc:
         # just catch generic errors - you can do your homework to beef this up
@@ -226,7 +226,7 @@ def main():
         buffer = sys.stdin.read()
 
         # send data off
-        client_sender(REPLACE_ME)
+        client_sender(buffer)
 
     # we are going to listen and potentially
     # upload things, execute commands and drop a shell back
